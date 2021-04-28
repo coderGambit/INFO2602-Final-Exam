@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+
+		<meta charset="UTF-8">
+		<title>Store App</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<style>
+
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+				color: #333333;
+            }
+
+            .main{
+                display: flex;
+                height: 84vh;
+            }
+
+            header{
+                padding: 1rem;
+                margin-bottom: 24px;
+                box-shadow: 0 1px 5px darkgray;
+				display: flex;
+            }
+
+			header > a{
+				margin: 0 0 0 auto;
+				font-size: 1.5rem;
+				text-decoration: none;
+				color: darkblue;
+			}
+
+            header > a:hover{
+				border-bottom: 2px solid darkblue;
+				text-shadow: 0 0 8px darkblue;
+			}
+
+            header > a:active{
+				transition-duration: 55ms;
+				transform: scale(0.97);
+			}
+
+            .product-and-search-container{
+                margin: 0 2rem 0 2rem;
+                flex: 1 0 0;
+            }
+
+            .search-container{
+                text-align: center;
+            }
+
+            .product-container{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, 416px);
+                height: 100%;
+                align-items: center;
+                justify-items: center;
+				justify-content: center;
+                grid-auto-rows: 250px;
+                overflow: auto;
+                margin: 2rem auto 0 auto;
+                gap: 40px;
+                max-width: 1600px;
+            }
+
+            .product{
+                box-shadow: 0 0 8px darkgray;
+                border-radius: 20px;
+                width: 400px;
+                height: 225px;
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+				grid-template-rows: 1fr 1fr 1fr;
+                align-self: center;
+                justify-self: center;
+                grid-template-areas:
+						"pImage pImage pImage pImage	pName   pName   pName   		pName"
+      					"pImage pImage pImage pImage	pName   pName   pName        pName"
+      					"pImage pImage pImage pImage	pPrice  pPrice  pCartButton  pCartButton";
+            }
+
+			.product-image{
+				height: 100%;
+				max-width: 200px;
+				grid-area: pImage;
+                background-size: contain;
+                background-repeat: no-repeat;
+                border-radius: 20px 0 0 20px;
+			}
+
+            .product-name{
+                overflow: auto;
+                flex: 1 1 0;
+                grid-area: pName;
+                font-weight: bold;
+				margin: 8px 8px 8px 0;
+            }
+
+            .product-price{
+                overflow: hidden;
+                grid-area: pPrice;
+                align-self: center;
+				font-weight: 500;
+            }
+
+            .product-add-to-cart-buton{
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                box-shadow: 0 0 5px #333;
+                font-size: 2rem;
+                background-color: darkblue;
+                color: white;
+                grid-area: pCartButton;
+                justify-self: center;
+                align-self: center;
+            }
+
+            .product-add-to-cart-buton:hover{
+                box-shadow: 0 0 5px black;
+                background-color: white;
+                color: darkblue;
+                cursor: pointer;
+            }
+
+            .product-add-to-cart-buton:active{
+                box-shadow: 0 0 5px black;
+                background-color: darkblue;
+                color: white;
+            }
+
+            .cart{
+                /*display: inline-flex;*/
+                display: flex;
+                min-height: 0;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                border-left: 1px solid black;
+                width: 400px;
+                margin: 0 0 0 auto;
+                overflow: auto;
+            }
+
+            .cart-item{
+                border-bottom: 1px solid black;
+                width: max-content;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                flex: 0 0 0;
+            }
+
+			.cart-item > h3{
+				overflow: auto;
+				width: 384px;
+				height: 80;
+			}
+
+			.cart-item > p{
+                font-weight: 500;
+			}
+
+			.cart-item > form{
+				display: flex;
+				gap: 1rem;
+				margin-bottom: 1rem;
+				align-items: center;
+			}
+
+            .cart-item > form > input[type="number"]{
+                max-width: 80px;
+            }
+
+            .my-button{
+                border: none;
+                box-shadow: 0 0 5px #333;
+				padding: 8px 12px;
+				border-radius: 5px;
+				font-weight: bold;
+                background-color: darkblue;
+                color: white;
+				text-transform: uppercase;
+            }
+
+            .my-button:hover{
+                box-shadow: 0 0 5px black;
+                background-color: white;
+                color: darkblue;
+                cursor: pointer;
+			}
+
+            .my-button:active{
+                box-shadow: 0 0 5px black;
+                background-color: darkblue;
+                color: white;
+			}
+
+		</style>
+
+	</head>
+
+	<body>
+
+		<header>
+			<h1>Store App</h1>
+			<a href="/">Home</a>
+		</header>
+
+		<main class="main">
+
+			<section class="product-and-search-container">
+
+				<section class="search-container">
+
+					<article>
+
+						<form id="search-form" class="search-form">
+
+							<input
+								type="search"
+								id="product-search"
+								name="productSearch"
+								placeholder="Search">
+							<input class="my-button" type="button" value="Search" onclick="search()">
+
+						</form>
+
+					</article>
+
+				</section>
+
+				<section id="product-container" class="product-container">
+
+					{% for product in products %}
+						<article class="product">
+
+							<img class="product-image" src="{{product.image}}" alt="Product Image">
+							<p class="product-name">{{product.name}}</p>
+							<p class="product-price">${{product.price}}</p>
+							<button class="product-add-to-cart-buton" onclick="addToCart({{product.id}})">+</button>
+
+						</article>
+					{% endfor %}
+
+				</section>
+
+			</section>
+
+			<aside class="cart">
+
+				{% for item in cart %}
+
+					<article class="cart-item">
+
+						<h3>{{item.name}}</h3>
+						<p>Price: {{item.price}}</p>
+
+						<form>
+
+							<label for="quantity-{{item.id}}">Quantity: </label>
+							<input type="number" min="0" id="quantity-{{item.id}}" name="quantity-{{item.id}}" value="{{item.quantity}}">
+							<input class="my-button" type="button" onclick="updateQuantity({{item.id}})" value="Update">
+
+						</form>
+
+					</article>
+
+				{% endfor %}
+
+				<h3 id="cart-total">Total: ${{cartTotal}}</h3>
+
+			</aside>
+
+		</main>
+
+	<script>
+
+		function createProductElement(product){
+
+            let productElement = document.createElement("article");
+            let productImage = document.createElement("img");
+            let productName = document.createElement("p");
+            let productPrice = document.createElement("p");
+            let productAddToCartButton = document.createElement("button");
+
+            productElement.className = "product";
+            productImage.className = "product-image"
+			productImage.src = product.image;
+            productImage.alt = "Product Image";
+            productName.className = "product-name";
+            productName.innerText = product.name;
+            productPrice.className = "product-price";
+            productPrice.innerText = product.price;
+            productAddToCartButton.className = "product-add-to-cart-buton";
+            productAddToCartButton.innerText = "+";
+            productAddToCartButton.setAttribute("onclick", `addToCart(${product.id})`);
+
+            productElement.appendChild(productImage);
+            productElement.appendChild(productName);
+            productElement.appendChild(productPrice);
+            productElement.appendChild(productAddToCartButton);
+
+            return productElement;
+		}
+
+		function showSearchResults(products){
+
+		    let productContainer = document.getElementById("product-container");
+		    productContainer.textContent = "";
+
+            for(let i = 0; i < products.length; ++i){
+				let productElement = createProductElement(products[i]);
+				productContainer.appendChild(productElement);
+            }
+		}
+
+		function search(){
+
+		    myForm = document.getElementById("search-form");
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+
+                if(xhr.readyState === XMLHttpRequest.DONE){
+                    if (xhr.status === 200
+                        && xhr.responseText != null
+                        && xhr.responseText.length > 0) {
+
+                        if(xhr.responseText === "no results")
+                            alert("Sorry, there were no results for your search");
+                        else{
+
+							let products = JSON.parse(xhr.responseText);
+							showSearchResults(products);
+						}
+
+                    }
+                    else {
+                        alert("There was an error serving your request\n\n" + xhr.responseText);
+                    }
+                }
+            }
+            formData = new FormData(myForm);
+            let data = null;
+            for (let pair of formData.entries()) {
+                data = pair;
+            }
+
+            if(data === null || data.length === 0 || data[1].length === 0){
+                alert("Please enter a search query")
+				return;
+			}
+			// had to pass the search query through the route because for some strange reason
+			// the server keeps receiving empty objects
+            postToRoute("/search/" + data[1], 'GET', xhr);
+		}
+
+		function updateQuantity(productID){
+
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+
+                if(xhr.readyState === XMLHttpRequest.DONE){
+                    if (xhr.status === 200
+                        && xhr.responseText != null
+                        && xhr.responseText.length > 0) {
+
+                        if(xhr.responseText === "updated")
+                            location.reload(true);
+                        else
+                            alert("Try changing the item quantity before updating");
+                    }
+                    else {
+                        alert("There was an error serving your request\n\n" + xhr.responseText);
+                    }
+                }
+            }
+            
+            let element = document.getElementById("quantity-" + productID);
+            postToRoute("/updateQuantity", 'POST', xhr, new FormData(element.parentElement));
+		}
+
+		// this function utilizes code that I wrote for the project
+		function addToCart(productID){
+
+		    let xhr = new XMLHttpRequest();
+		    xhr.onreadystatechange = function (){
+
+		        if(xhr.readyState === XMLHttpRequest.DONE){
+
+                    if (xhr.status === 200
+                        && xhr.responseText != null
+                        && xhr.responseText.length > 0) {
+
+                        // if object inserted, create a cart item with the product id
+						// then insert it into the cart and update the total
+						// if not inserted, update the quantity in the cart and update the total
+                        let response = JSON.parse(xhr.responseText);
+                        let added = response.added;
+                        let cartTotal = response.cartTotal;
+
+                        if(added){// creaate new cart item
+							createCartItem(response.itemDetails, cartTotal);
+						}
+                        else{// update existing item
+							updateCartItem(response.itemDetails, cartTotal);
+						}
+
+                    }
+                    else {
+                        alert("There was an error serving your request\n\n" + xhr.responseText);
+                    }
+				}
+			}
+			postToRoute("/addToCart/" + productID, "PUT", xhr)
+		}
+
+		//This function utilizes code I wrote for the project
+        function postToRoute(url, method, xhr, data = null) {
+            xhr.open(method, url);
+            xhr.send(data);
+        }
+
+        function createCartItem(item, cartTotal){
+
+            let cartItem = document.createElement("article");
+            let itemName = document.createElement("h3");
+            let itemPrice = document.createElement("p");
+            let updateQuantityForm = document.createElement("form");
+            let labelForQuantityInputElement = document.createElement("label");
+            let quantityInputElement = document.createElement("input");
+            let quantityUpdateButton = document.createElement("input");
+
+            cartItem.className = "cart-item";
+            itemName.innerText = item.name;
+            itemPrice.innerText = "Price: $" + item.price;
+            labelForQuantityInputElement.innerText = "Quantity:";
+            quantityInputElement.value = item.quantity;
+
+            labelForQuantityInputElement.for = "quantity-" + item.id;
+            quantityInputElement.type = "number";
+            quantityInputElement.id = "quantity-" + item.id;
+            quantityInputElement.name = "quantity-" + item.id;
+            quantityInputElement.value = 1;
+            quantityInputElement.min = 0;
+            quantityUpdateButton.type = "button";
+            quantityUpdateButton.value = "Update";
+            quantityUpdateButton.className = "my-button";
+            quantityUpdateButton.setAttribute('onclick', `updateQuantity(${item.id})`);
+
+            updateQuantityForm.appendChild(labelForQuantityInputElement);
+            updateQuantityForm.appendChild(quantityInputElement);
+            updateQuantityForm.appendChild(quantityUpdateButton);
+
+            cartItem.appendChild(itemName);
+            cartItem.appendChild(itemPrice);
+            cartItem.appendChild(updateQuantityForm);
+
+            let cartTotalElement = document.getElementById("cart-total");
+            cartTotalElement.insertAdjacentElement("beforebegin", cartItem);
+            cartTotalElement.innerText = "Total: $" + cartTotal;
+		}
+
+		function updateCartItem(item, cartTotal){
+			let quantityInput = document.getElementById("quantity-" + item.id);
+			let cartTotalElement = document.getElementById("cart-total");
+			quantityInput.value = item.quantity;
+            cartTotalElement.innerText = "Total: $" + cartTotal;
+		}
+
+	</script>
+
+	</body>
+
+</html>
