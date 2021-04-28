@@ -259,7 +259,7 @@
 					<article class="cart-item">
 
 						<h3>{{item.name}}</h3>
-						<p>Price: {{item.price}}</p>
+						<p>Price: ${{item.price}}</p>
 
 						<form>
 
@@ -314,7 +314,7 @@
             productName.className = "product-name";
             productName.innerText = product.name;
             productPrice.className = "product-price";
-            productPrice.innerText = product.price;
+            productPrice.innerText = "$" + product.price;
             productAddToCartButton.className = "product-add-to-cart-buton";
             productAddToCartButton.innerText = "+";
             productAddToCartButton.setAttribute("onclick", `addToCart(${product.id})`);
