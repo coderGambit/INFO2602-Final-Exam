@@ -28,10 +28,14 @@ app.app_context().push()
 # filters products based on search term provided
 def product_search(search):
     # uncomment after models are implemented
-     return Product.query.filter(
-         Product.name.like( '%'+search+'%' )
-         | Product.about.like( '%'+search+'%' )
-         | Product.category.like( '%'+search+'%' ))
+
+    if search == "all":
+        return Product.query.all()
+
+    return Product.query.filter(
+        Product.name.like( '%'+search+'%' )
+        | Product.about.like( '%'+search+'%' )
+        | Product.category.like( '%'+search+'%' ))
 
 
 # calculates the total of all cart items based on quantity and price
@@ -55,7 +59,7 @@ def cart_total():
 @app.route('/')
 def index():
     cartTotal, cart = cart_total()
-    products = Product.query.all()
+    products = product_search("all")
     return render_template('app.html', cart=cart, cartTotal=cartTotal, products=products)
 
 

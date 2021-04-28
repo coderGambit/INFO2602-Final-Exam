@@ -286,10 +286,15 @@
 		// since the search is initiated via a button click as oppossed to form submission
 		// intercept all enter press on the form input then perform the button click
 
-        document.getElementById("search-form").onkeypress = function (event){
+        document.getElementById("search-form").onkeyup = function (event){
+			let val = event.target.value;
 
             if (event.key === "Enter") {
                 event.preventDefault();
+                document.getElementById("my-button").click();
+                return;
+            }
+            if(event.target.value.length > 0) {
                 document.getElementById("my-button").click();
             }
         };
