@@ -227,7 +227,7 @@
 								id="product-search"
 								name="productSearch"
 								placeholder="Search">
-							<input class="my-button" type="button" value="Search" onclick="search()">
+							<input id="my-button" class="my-button" type="button" value="Search" onclick="search()">
 
 						</form>
 
@@ -280,6 +280,19 @@
 		</main>
 
 	<script>
+
+		// ****************************Ajax for search function start***************************
+
+		// since the search is initiated via a button click as oppossed to form submission
+		// intercept all enter press on the form input then perform the button click
+
+        document.getElementById("search-form").onkeypress = function (event){
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.getElementById("my-button").click();
+            }
+        };
 
 		function createProductElement(product){
 
@@ -359,7 +372,9 @@
 			// the server keeps receiving empty objects
             postToRoute("/search/" + data[1], 'GET', xhr);
 		}
+        // ****************************Ajax for search function end***************************
 
+		// ***************************Ajax for update functionality start**************************
 		function updateQuantity(productID){
 
             let xhr = new XMLHttpRequest();
@@ -385,47 +400,9 @@
             postToRoute("/updateQuantity", 'POST', xhr, new FormData(element.parentElement));
 		}
 
-		// this function utilizes code that I wrote for the project
-		function addToCart(productID){
+        // ***************************Ajax for update functionality end**************************
 
-		    let xhr = new XMLHttpRequest();
-		    xhr.onreadystatechange = function (){
-
-		        if(xhr.readyState === XMLHttpRequest.DONE){
-
-                    if (xhr.status === 200
-                        && xhr.responseText != null
-                        && xhr.responseText.length > 0) {
-
-                        // if object inserted, create a cart item with the product id
-						// then insert it into the cart and update the total
-						// if not inserted, update the quantity in the cart and update the total
-                        let response = JSON.parse(xhr.responseText);
-                        let added = response.added;
-                        let cartTotal = response.cartTotal;
-
-                        if(added){// creaate new cart item
-							createCartItem(response.itemDetails, cartTotal);
-						}
-                        else{// update existing item
-							updateCartItem(response.itemDetails, cartTotal);
-						}
-
-                    }
-                    else {
-                        alert("There was an error serving your request\n\n" + xhr.responseText);
-                    }
-				}
-			}
-			postToRoute("/addToCart/" + productID, "PUT", xhr)
-		}
-
-		//This function utilizes code I wrote for the project
-        function postToRoute(url, method, xhr, data = null) {
-            xhr.open(method, url);
-            xhr.send(data);
-        }
-
+		// ***************************Ajax for add to cart functionality start *************************
         function createCartItem(item, cartTotal){
 
             let cartItem = document.createElement("article");
@@ -464,15 +441,56 @@
             let cartTotalElement = document.getElementById("cart-total");
             cartTotalElement.insertAdjacentElement("beforebegin", cartItem);
             cartTotalElement.innerText = "Total: $" + cartTotal;
-		}
+        }
 
-		function updateCartItem(item, cartTotal){
-			let quantityInput = document.getElementById("quantity-" + item.id);
-			let cartTotalElement = document.getElementById("cart-total");
-			quantityInput.value = item.quantity;
+        // this function utilizes code that I wrote for the project
+        function addToCart(productID){
+
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function (){
+
+                if(xhr.readyState === XMLHttpRequest.DONE){
+
+                    if (xhr.status === 200
+                        && xhr.responseText != null
+                        && xhr.responseText.length > 0) {
+
+                        // if object inserted, create a cart item with the product id
+                        // then insert it into the cart and update the total
+                        // if not inserted, update the quantity in the cart and update the total
+                        let response = JSON.parse(xhr.responseText);
+                        let added = response.added;
+                        let cartTotal = response.cartTotal;
+
+                        if(added){// creaate new cart item
+                            createCartItem(response.itemDetails, cartTotal);
+                        }
+                        else{// update existing item
+                            updateCartItem(response.itemDetails, cartTotal);
+                        }
+
+                    }
+                    else {
+                        alert("There was an error serving your request\n\n" + xhr.responseText);
+                    }
+                }
+            }
+            postToRoute("/addToCart/" + productID, "PUT", xhr)
+        }
+
+        function updateCartItem(item, cartTotal){
+            let quantityInput = document.getElementById("quantity-" + item.id);
+            let cartTotalElement = document.getElementById("cart-total");
+            quantityInput.value = item.quantity;
             cartTotalElement.innerText = "Total: $" + cartTotal;
-		}
+        }
+        // ***************************Ajax for add to cart functionality end *************************
 
+        //This function utilizes code I wrote for the project
+        function postToRoute(url, method, xhr, data = null) {
+            xhr.open(method, url);
+            xhr.send(data);
+        }
 	</script>
 
 	</body>
